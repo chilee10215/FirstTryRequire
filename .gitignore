@@ -52,3 +52,16 @@ docker-compose.override.yml
 *.tmp
 *.temp
 .cache/
+
+# .NET Build artifacts
+backend/**/bin/
+backend/**/obj/
+backend/**/*.user
+backend/**/*.suo
+backend/**/*.cache
+
+# Next.js build artifacts
+frontend/**/.next/
+frontend/**/out/
+frontend/**/build/
+frontend/**/node_modules/
