@@ -1,0 +1,54 @@
+# Environment variables
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# OS Files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# IDEs and Editors
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.project
+.classpath
+.settings/
+*.sublime-project
+*.sublime-workspace
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+
+# Docker
+.docker/
+docker-compose.override.yml
+
+# Database
+*.sql.backup
+*.dump
+
+# Certificates
+*.pfx
+*.pem
+*.key
+*.crt
+
+# Temporary files
+*.tmp
+*.temp
+.cache/

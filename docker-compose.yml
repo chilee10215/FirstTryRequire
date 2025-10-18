@@ -1,0 +1,71 @@
+version: '3.8'
+
+services:
+  # MySQL Database
+  mysql:
+    image: mysql:8.0
+    container_name: firsttry_mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: firsttry_db
+      MYSQL_USER: jin
+      MYSQL_PASSWORD: jinpassword
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./database/init:/docker-entrypoint-initdb.d
+    networks:
+      - firsttry_network
+    command: --default-authentication-plugin=mysql_native_password
+
+  # .NET 8 Backend API
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: firsttry_backend
+    restart: unless-stopped
+    ports:
+      - "5000:5000"
+      - "5001:5001"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:5000;https://+:5001
+      - ASPNETCORE_Kestrel__Certificates__Default__Password=password
+      - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/aspnetapp.pfx
+      - ConnectionStrings__DefaultConnection=Server=mysql;Database=firsttry_db;User=appuser;Password=apppassword;Port=3306;
+    depends_on:
+      - mysql
+    volumes:
+      - ~/.aspnet/https:/https:ro
+    networks:
+      - firsttry_network
+
+  # Next.js Frontend
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: firsttry_frontend
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - NEXT_PUBLIC_API_URL=http://localhost:5000
+    volumes:
+      - ./frontend/first-work-item:/app
+      - /app/node_modules
+      - /app/.next
+    depends_on:
+      - backend
+    networks:
+      - firsttry_network
+
+volumes:
+  mysql_data:
+
+networks:
+  firsttry_network:
+    driver: bridge
