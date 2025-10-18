@@ -3,17 +3,17 @@ FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
 
 # Copy project files and restore dependencies
-COPY *.csproj ./
-RUN dotnet restore
+COPY FirstTryRequire/*.csproj ./FirstTryRequire/
+RUN dotnet restore FirstTryRequire/FirstTryRequire.csproj
 
 # Copy the rest of the source code
-COPY . ./
+COPY FirstTryRequire/ ./FirstTryRequire/
 
 # Build the application
-RUN dotnet build -c Release -o /app/build
+RUN dotnet build FirstTryRequire/FirstTryRequire.csproj -c Release -o /app/build
 
 # Publish the application
-RUN dotnet publish -c Release -o /app/publish
+RUN dotnet publish FirstTryRequire/FirstTryRequire.csproj -c Release -o /app/publish
 
 # Use the official .NET 8 runtime image for running
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS runtime
@@ -27,8 +27,8 @@ EXPOSE 5000
 EXPOSE 5001
 
 # Set environment variables
-ENV ASPNETCORE_URLS=http://+:5000;https://+:5001
-ENV ASPNETCORE_ENVIRONMENT=Development
+ENV ASPNETCORE_URLS=http://+:5000
+ENV ASPNETCORE_ENVIRONMENT=Docker
 
 # Start the application
-ENTRYPOINT ["dotnet", "FirstTryRequire.Backend.dll"]
+ENTRYPOINT ["dotnet", "FirstTryRequire.dll"]

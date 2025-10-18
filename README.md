@@ -1,6 +1,20 @@
 # FirstTryRequire Project
 
-A full-stack web application built with React frontend, .NET 8 backend, and MySQL database, all containerized with Docker.
+A full-stack web application built with **Next.js** frontend, **.NET 8** backend (Clean Architecture), and **MySQL** database, all containerized with Docker.
+
+## ✨ Features
+
+- 🎯 **Clean Architecture** backend following SOLID principles
+- ⚛️ **Next.js** (React) frontend with TypeScript
+- 🗄️ **MySQL** database with Entity Framework Core
+- 🐳 **Docker** containerization for easy deployment
+- 📚 **Swagger/OpenAPI** documentation
+- 🔐 **CORS** configured for frontend-backend communication
+- 📝 **Logging** with structured logs
+
+## 🚀 Current API Endpoints
+
+- `GET /api/users/{id}` - Retrieve a user by ID
 
 ## Project Structure
 
@@ -33,23 +47,11 @@ git clone <your-repo-url>
 cd FirstTryRequire
 ```
 
-### 2. Create Your Applications
+### 2. Applications Already Created!
 
-#### Frontend (React)
-
-```bash
-cd frontend
-npx create-react-app . --template typescript
-cd ..
-```
-
-#### Backend (.NET 8 Web API)
-
-```bash
-cd backend
-dotnet new webapi -n FirstTryRequire.Backend
-cd ..
-```
+✅ **Frontend:** Next.js application in `frontend/first-work-item/`
+✅ **Backend:** .NET 8 Web API with Clean Architecture in `backend/FirstTryRequire/`
+✅ **Database:** MySQL with sample users table
 
 ### 3. Start All Services
 
@@ -201,13 +203,64 @@ MYSQL_PASSWORD=your_password
 REACT_APP_API_URL=http://localhost:5000
 ```
 
+## Testing the Backend API
+
+### Quick Test (Local Development)
+
+1. **Start MySQL:**
+
+   ```bash
+   docker-compose up mysql -d
+   ```
+
+2. **Run Backend API:**
+
+   ```bash
+   cd backend/FirstTryRequire
+   dotnet run
+   ```
+
+3. **Test with Swagger:**
+
+   - Open browser: `http://localhost:5000/swagger`
+   - Try GET `/api/users/1`
+
+4. **Test with cURL:**
+   ```bash
+   curl http://localhost:5000/api/users/1
+   ```
+
+### Documentation
+
+- 📖 **[Quick Start Testing Guide](QUICK_START_TESTING.md)** - Step-by-step testing instructions
+- 🏗️ **[Clean Architecture Summary](backend/CLEAN_ARCHITECTURE_SUMMARY.md)** - Architecture explanation
+- 📚 **[API Testing Guide](backend/API_TESTING_GUIDE.md)** - Detailed API documentation
+- 🗂️ **[Project Structure](backend/PROJECT_STRUCTURE.md)** - Code organization
+
+## Backend Architecture
+
+The backend follows **Clean Architecture** with 4 layers:
+
+1. **Domain Layer** - Core business entities (User, IUserRepository)
+2. **Application Layer** - Use cases and DTOs (GetUserUseCase, UserDto)
+3. **Infrastructure Layer** - Database implementation (EF Core, UserRepository)
+4. **API Layer** - HTTP endpoints (UsersController)
+
+### Benefits:
+
+- ✅ Testable - Each layer can be tested independently
+- ✅ Maintainable - Clear separation of concerns
+- ✅ Flexible - Easy to swap implementations
+- ✅ Scalable - Simple to add new features
+
 ## Next Steps
 
-1. Create your React application in the `frontend/` directory
-2. Create your .NET 8 Web API in the `backend/` directory
-3. Customize the database schema in `database/init/01-init.sql`
-4. Update the connection string in your .NET application
-5. Start developing your application features!
+1. ✅ Test the GET user API endpoint
+2. 📝 Add more CRUD endpoints (POST, PUT, DELETE)
+3. 🔐 Implement authentication (JWT)
+4. ✅ Create frontend components to consume the API
+5. 🧪 Add unit and integration tests
+6. 🚀 Deploy to production
 
 ## Support
 
