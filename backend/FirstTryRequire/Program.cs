@@ -1,8 +1,12 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 using FirstTryRequire.Infrastructure.Data;
 using FirstTryRequire.Domain.Interfaces;
 using FirstTryRequire.Infrastructure.Repositories;
 using FirstTryRequire.Application.UseCases;
+using FirstTryRequire.Application.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -24,6 +28,37 @@ builder.Services.AddScoped<IUserRepository, UserRepository>();
 
 // Register use cases (Application layer)
 builder.Services.AddScoped<GetUserUseCase>();
+
+// Register services (Application layer)
+builder.Services.AddScoped<IAuthService, AuthService>();
+
+// Configure JWT Authentication
+var jwtSettings = builder.Configuration.GetSection("JwtSettings");
+var secretKey = jwtSettings["SecretKey"] ?? "YourSuperSecretKeyThatIsAtLeast32CharactersLong!";
+var issuer = jwtSettings["Issuer"] ?? "FirstTryRequire";
+var audience = jwtSettings["Audience"] ?? "FirstTryRequireUsers";
+
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+.AddJwtBearer(options =>
+{
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuerSigningKey = true,
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(secretKey)),
+        ValidateIssuer = true,
+        ValidIssuer = issuer,
+        ValidateAudience = true,
+        ValidAudience = audience,
+        ValidateLifetime = true,
+        ClockSkew = TimeSpan.Zero
+    };
+});
+
+builder.Services.AddAuthorization();
 
 // Add CORS policy for frontend
 builder.Services.AddCors(options =>
@@ -49,6 +84,7 @@ app.UseHttpsRedirection();
 
 app.UseCors("AllowFrontend");
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
