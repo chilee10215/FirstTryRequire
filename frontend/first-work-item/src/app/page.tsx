@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 
 interface AuthResponse {
   token: string;
@@ -22,6 +23,15 @@ export default function Home() {
   const [messageType, setMessageType] = useState<"success" | "error">(
     "success"
   );
+  const router = useRouter();
+
+  // Check if user is already logged in
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      router.push("/dashboard");
+    }
+  }, [router]);
 
   const showMessage = (text: string, type: "success" | "error") => {
     setMessage(text);
@@ -53,7 +63,10 @@ export default function Home() {
         localStorage.setItem("username", authResponse.username);
         localStorage.setItem("manageLevel", authResponse.manageLevel);
         showMessage(`Welcome back, ${authResponse.username}!`, "success");
-        // TODO: Redirect to dashboard or main app
+        // Redirect to dashboard
+        setTimeout(() => {
+          router.push("/dashboard");
+        }, 1000);
       } else {
         const errorData = data as ErrorResponse;
         showMessage(errorData.message || "Login failed", "error");
@@ -95,7 +108,10 @@ export default function Home() {
           `Account created successfully! Welcome, ${authResponse.username}!`,
           "success"
         );
-        // TODO: Redirect to dashboard or main app
+        // Redirect to dashboard
+        setTimeout(() => {
+          router.push("/dashboard");
+        }, 1000);
       } else {
         const errorData = data as ErrorResponse;
         showMessage(errorData.message || "Registration failed", "error");
