@@ -7,6 +7,7 @@ using FirstTryRequire.Domain.Interfaces;
 using FirstTryRequire.Infrastructure.Repositories;
 using FirstTryRequire.Application.UseCases;
 using FirstTryRequire.Application.Services;
+using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,6 +17,28 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new() { Title = "FirstTryRequire API", Version = "v1" });
+
+    // Swagger JWT Bearer setup so "Authorize" works
+    var securityScheme = new OpenApiSecurityScheme
+    {
+        Name = "Authorization",
+        Description = "Enter JWT Bearer token only. Example: eyJhbGci...",
+        In = ParameterLocation.Header,
+        Type = SecuritySchemeType.Http,
+        Scheme = JwtBearerDefaults.AuthenticationScheme,
+        BearerFormat = "JWT",
+        Reference = new OpenApiReference
+        {
+            Type = ReferenceType.SecurityScheme,
+            Id = JwtBearerDefaults.AuthenticationScheme
+        }
+    };
+
+    c.AddSecurityDefinition(JwtBearerDefaults.AuthenticationScheme, securityScheme);
+    c.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        { securityScheme, Array.Empty<string>() }
+    });
 });
 
 // Configure MySQL Database
@@ -25,12 +48,15 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 
 // Register repositories (Infrastructure layer)
 builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IWorkItemRepository, WorkItemRepository>();
+builder.Services.AddScoped<IUserWorkItemRepository, UserWorkItemRepository>();
 
 // Register use cases (Application layer)
 builder.Services.AddScoped<GetUserUseCase>();
 
 // Register services (Application layer)
 builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IWorkItemService, WorkItemService>();
 
 // Configure JWT Authentication
 var jwtSettings = builder.Configuration.GetSection("JwtSettings");

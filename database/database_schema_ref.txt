@@ -1,0 +1,38 @@
+
+** Create WorkItems table
+-- Select your existing database
+USE firsttry_db;
+
+-- Create the WorkItems table
+CREATE TABLE IF NOT EXISTS WorkItems (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    title VARCHAR(200) NOT NULL,
+    description VARCHAR(4000),
+    created_time DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    status VARCHAR(50) NOT NULL,
+    last_updated_time DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+** Create WorkItems table
+USE firsttry_db;
+
+CREATE TABLE IF NOT EXISTS UserWorkItem (
+    user_id INT NOT NULL,
+    workitem_id INT NOT NULL,
+    status VARCHAR(50) NOT NULL,
+
+    -- Define composite primary key to avoid duplicates
+    PRIMARY KEY (user_id, workitem_id),
+
+    -- Foreign key references
+    CONSTRAINT fk_userworkitem_user
+        FOREIGN KEY (user_id) REFERENCES users(id)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE,
+
+    CONSTRAINT fk_userworkitem_workitem
+        FOREIGN KEY (workitem_id) REFERENCES WorkItems(id)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE
+);
+
